@@ -2,7 +2,10 @@ package com.bilginyuksel.sdk.push.api;
 
 import android.content.Context;
 import android.net.InetAddresses;
+import android.os.Build;
 import android.util.Log;
+
+import androidx.annotation.RequiresApi;
 
 import com.bilginyuksel.sdk.push.NotificationSender;
 import com.neovisionaries.ws.client.ThreadType;
@@ -37,7 +40,7 @@ public class ClientServerConnection implements WebSocketListener {
 
     // Run this on debug mode
     public ClientServerConnection(Context context) {
-        this(context, "192.168.1.57", 8888, "handshake");
+        this(context, "192.168.1.61", 8888, "handshake");
 //        this("localhost", 8888, "handshake");
     }
 
@@ -114,10 +117,11 @@ public class ClientServerConnection implements WebSocketListener {
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onTextMessage(WebSocket websocket, String text) throws Exception {
         Log.i(TAG, "onTextMessage: String text message sent= " + text);
-        NotificationSender.send(context);
+        NotificationSender.send(context,text);
     }
 
     @Override
