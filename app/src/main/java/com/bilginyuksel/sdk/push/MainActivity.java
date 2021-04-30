@@ -32,9 +32,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        NotificationSender notificationSender = new NotificationSender(getApplicationContext());
         setContentView(R.layout.activity_main);
         Button button = findViewById(R.id.sendNotifbutton);
-        button.setOnClickListener(v -> NotificationSender.send(getApplicationContext()));
-        new RunnerThread().start();
+        button.setOnClickListener(v -> notificationSender.send());
     }
 }

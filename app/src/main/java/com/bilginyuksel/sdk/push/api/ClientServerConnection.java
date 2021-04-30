@@ -121,7 +121,7 @@ public class ClientServerConnection implements WebSocketListener {
     @Override
     public void onTextMessage(WebSocket websocket, String text) throws Exception {
         Log.i(TAG, "onTextMessage: String text message sent= " + text);
-        NotificationSender.send(context,text);
+        //NotificationSender.send(context,text);
     }
 
     @Override
