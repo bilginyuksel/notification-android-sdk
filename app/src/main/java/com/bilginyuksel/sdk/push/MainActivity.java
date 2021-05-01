@@ -35,6 +35,6 @@ public class MainActivity extends AppCompatActivity {
         NotificationSender notificationSender = new NotificationSender(getApplicationContext());
         setContentView(R.layout.activity_main);
         Button button = findViewById(R.id.sendNotifbutton);
-        button.setOnClickListener(v -> notificationSender.send());
+        button.setOnClickListener(v -> notificationSender.send(new RemoteMessage()));
     }
 }
