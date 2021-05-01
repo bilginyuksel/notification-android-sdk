@@ -8,55 +8,55 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 
+import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
-import static android.provider.Settings.System.getString;
 
 public class NotificationSender {
 
-    private final static String CHANNEL_ID = "channel";
+    private final Context context;
+    private final static String CHANNEL_ID = "push-notification-channel";
+    private NotificationChannel notificationChannel;
 
-    public static void send(Context context, Object notificationMessage) {
-        Intent intent = new Intent(context, MainActivity.class);
-        PendingIntent pIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        NotificationCompat.Builder b = new NotificationCompat.Builder(context);
-
-        b.setAutoCancel(true)
-                .setDefaults(Notification.DEFAULT_ALL)
-                .setWhen(System.currentTimeMillis())
-                .setSmallIcon(R.drawable.ic_launcher_background)
-                .setTicker("notification")
-                .setContentTitle("notification")
-                .setContentText("notification")
-                .setDefaults(Notification.DEFAULT_LIGHTS| Notification.DEFAULT_SOUND)
-                .setContentIntent(pIntent)
-                .setContentInfo("Info");
-
-
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(1, b.build());
+    public NotificationSender(Context context) {
+        this.context= context;
+        checkAndroidVersionIsBiggerThanOreo();
     }
 
-    public static void send(Context context) {
-        Intent intent = new Intent(context, MainActivity.class);
-        PendingIntent pIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    public void checkAndroidVersionIsBiggerThanOreo(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+             notificationChannel = createChannel();
+        }
+    }
 
-        NotificationCompat.Builder b = new NotificationCompat.Builder(context, "yuksel");
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public NotificationChannel createChannel(){
+        return new NotificationChannel(CHANNEL_ID,"push-notification-channel",NotificationManager.IMPORTANCE_HIGH);
+    }
 
-        b.setAutoCancel(true)
-                .setDefaults(Notification.DEFAULT_ALL)
-                .setWhen(System.currentTimeMillis())
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public void send() {
+        NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notificationManager.createNotificationChannel(notificationChannel);
+        }
+        notificationManager.notify(123123, buildNotification());
+    }
+
+    public Notification buildNotification(){
+        NotificationCompat.Builder b = new NotificationCompat.Builder(context,CHANNEL_ID);
+        b.setContentTitle("My notification")
                 .setSmallIcon(R.drawable.ic_launcher_background)
-                .setTicker("notification")
-                .setContentTitle("notification")
-                .setContentText("notification")
-                .setDefaults(Notification.DEFAULT_LIGHTS| Notification.DEFAULT_SOUND)
-                .setContentIntent(pIntent)
-                .setContentInfo("Info");
+                .setContentText("Hello World!")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(createPendingIntent())
+                .setAutoCancel(true);
+        return b.build();
+    }
 
-
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(1, b.build());
+    public PendingIntent createPendingIntent(){
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        return PendingIntent.getActivity(context, 0, intent, 0);
     }
 }
