@@ -7,34 +7,32 @@ import android.os.Build;
 import android.os.Bundle;
 import android.widget.Button;
 
-import com.bilginyuksel.sdk.push.api.ClientServerConnection;
-import com.neovisionaries.ws.client.WebSocketException;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
-
-    public class RunnerThread extends Thread {
-
-        @Override
-        public void run() {
-            ClientServerConnection connection = new ClientServerConnection(getApplicationContext());
-            try {
-                connection.connect();
-            } catch (IOException | URISyntaxException | WebSocketException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         NotificationSender notificationSender = new NotificationSender(getApplicationContext());
+        RemoteMessage remoteMessage = new RemoteMessage();
+
+        Map<String ,String> extras = new HashMap<>();
+        extras.put("mesut","gedik");
+        extras.put("kaan","yüksel");
+        remoteMessage.setTitle("Deneme");
+        remoteMessage.setContent("Bu push sdk testi içindir");
+        remoteMessage.setExtras(extras);
         setContentView(R.layout.activity_main);
+
+        //WsConnection wsConnection = new WsConnection(notificationSender);
+        //wsConnection.start();
         Button button = findViewById(R.id.sendNotifbutton);
-        button.setOnClickListener(v -> notificationSender.send(new RemoteMessage()));
+        button.setOnClickListener(v -> notificationSender.send(remoteMessage));
     }
+
+
+
 }

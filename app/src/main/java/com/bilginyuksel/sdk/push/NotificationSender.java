@@ -8,10 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 
-import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -29,6 +27,7 @@ public class NotificationSender {
     private int priority;
     private boolean autoCancel;
 
+
     public NotificationSender(Context context) {
         this.context = context;
 
@@ -41,13 +40,11 @@ public class NotificationSender {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     public void send(RemoteMessage remoteMessage) {
-        NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
-
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         Notification notification = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setContentTitle("My notifc")
-                .setContentText("Hello World!")
+                .setContentTitle(remoteMessage.getTitle())
+                .setContentText(remoteMessage.getContent())
                 .setSmallIcon(smallIcon)
                 .setPriority(priority)
                 .setAutoCancel(autoCancel)
