@@ -18,8 +18,8 @@ public class WsConnInfo {
     private WsConnInfo() {
     }
 
-    public static WsConnInfoDTOBuilder create(String hostname, int port) {
-        return new WsConnInfoDTOBuilder(hostname, port);
+    public static WsConnInfoBuilder create(String hostname, int port) {
+        return new WsConnInfoBuilder(hostname, port);
     }
 
     public URI getURI() {
@@ -47,42 +47,42 @@ public class WsConnInfo {
                 .build();
     }
 
-    public static class WsConnInfoDTOBuilder {
-        private final WsConnInfo dto;
+    public static class WsConnInfoBuilder {
+        private final WsConnInfo wsConInfo;
 
-        public WsConnInfoDTOBuilder(String hostname, int port) {
-            dto = new WsConnInfo();
-            dto.hostname = hostname;
-            dto.port = port;
+        public WsConnInfoBuilder(String hostname, int port) {
+            wsConInfo = new WsConnInfo();
+            wsConInfo.hostname = hostname;
+            wsConInfo.port = port;
         }
 
-        public WsConnInfoDTOBuilder path(String path) {
-            dto.path = path;
+        public WsConnInfoBuilder path(String path) {
+            wsConInfo.path = path;
             return this;
         }
 
-        public WsConnInfoDTOBuilder scheme(String scheme) {
-            dto.scheme = scheme;
+        public WsConnInfoBuilder scheme(String scheme) {
+            wsConInfo.scheme = scheme;
             return this;
         }
 
-        public WsConnInfoDTOBuilder setRequestBody(Map<String, Object> requestBody) {
-            dto.requestBody.putAll(requestBody);
+        public WsConnInfoBuilder setRequestBody(Map<String, Object> requestBody) {
+            wsConInfo.requestBody.putAll(requestBody);
             return this;
         }
 
-        public WsConnInfoDTOBuilder addRequestParameter(String key, String value) {
-            dto.requestParameters.put(key, value);
+        public WsConnInfoBuilder addRequestParameter(String key, String value) {
+            wsConInfo.requestParameters.put(key, value);
             return this;
         }
 
-        public WsConnInfoDTOBuilder setRequestParameters(Map<String, String> requestParameters) {
-            dto.requestParameters.putAll(requestParameters);
+        public WsConnInfoBuilder setRequestParameters(Map<String, String> requestParameters) {
+            wsConInfo.requestParameters.putAll(requestParameters);
             return this;
         }
 
         public WsConnInfo build() {
-            return dto;
+            return wsConInfo;
         }
 
     }

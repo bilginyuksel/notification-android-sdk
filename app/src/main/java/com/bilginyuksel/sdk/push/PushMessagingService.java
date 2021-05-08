@@ -6,13 +6,17 @@ import android.os.IBinder;
 
 import androidx.annotation.Nullable;
 
+import com.bilginyuksel.sdk.push.api.WsConnection;
+
 public class PushMessagingService extends Service {
+    private WsConnection wsConnection;
     protected NotificationSender notificationSender;
 
     @Override
     public void onCreate() {
         super.onCreate();
         notificationSender = new NotificationSender(this);
+        wsConnection = new WsConnection(notificationSender);
     }
 
     @Override
