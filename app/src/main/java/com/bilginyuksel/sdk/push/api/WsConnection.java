@@ -1,6 +1,5 @@
 package com.bilginyuksel.sdk.push.api;
 
-import com.bilginyuksel.sdk.push.NotificationSender;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFactory;
@@ -8,16 +7,20 @@ import com.neovisionaries.ws.client.WebSocketFactory;
 import java.io.IOException;
 
 public class WsConnection extends Thread {
-    private final NotificationSender notificationSender;
+    public WebSocketListenerImpl webSocketListener;
+    protected int maxRetryCount = 3;
+    protected int timeoutLimit = 5000;
+    protected int firstRetryMilliseconds = 500;
 
-    public WsConnection(NotificationSender notificationSender){
-        this.notificationSender= notificationSender;
+    // If the internet connection is gone, run local alarm system to make the connection
+    protected boolean alarmSystemOnline = true;
+    public WsConnection(WebSocketListenerImpl webSocketListener){
+        this.webSocketListener=webSocketListener;
     }
-
     @Override
     public void run() {
         super.run();
-        WsConnInfo connInfo = WsConnInfo.create("192.168.1.38",8888)
+        WsConnInfo connInfo = WsConnInfo.create("192.168.1.103",8888)
                 .scheme("ws")
                 .path("handshake")
                 .addRequestParameter("clientId","testid")
@@ -25,7 +28,7 @@ public class WsConnection extends Thread {
 
         try {
             WebSocket webSocket = new WebSocketFactory().createSocket(connInfo.getURI());
-            webSocket.addListener(new WebSocketListenerImpl(notificationSender));
+            webSocket.addListener(webSocketListener);
             webSocket.connect();
         } catch (IOException | WebSocketException e) {
             e.printStackTrace();

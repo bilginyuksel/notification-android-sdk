@@ -1,6 +1,5 @@
 package com.bilginyuksel.sdk.push.api;
 
-import com.bilginyuksel.sdk.push.NotificationSender;
 import com.bilginyuksel.sdk.push.RemoteMessage;
 import com.google.gson.Gson;
 import com.neovisionaries.ws.client.ThreadType;
@@ -15,10 +14,17 @@ import java.util.Map;
 
 public class WebSocketListenerImpl implements WebSocketListener {
 
-    private NotificationSender notificationSender;
+//    private final NotificationCallback notificationCallback;
 
-    public WebSocketListenerImpl(NotificationSender notificationSender){
-        this.notificationSender=notificationSender;
+//    public WebSocketListenerImpl(NotificationCallback notificationCallback){
+//        this.notificationCallback= notificationCallback;
+//
+//    }
+
+    private final MessageService messageService;
+
+    public WebSocketListenerImpl(MessageService messageService) {
+        this.messageService = messageService;
     }
 
     @Override
@@ -79,8 +85,7 @@ public class WebSocketListenerImpl implements WebSocketListener {
     @Override
     public void onTextMessage(WebSocket websocket, String text) throws Exception {
         System.out.println("TextMessage:" + text);
-        RemoteMessage remoteMessage = new Gson().fromJson(text,RemoteMessage.class);
-        notificationSender.send(remoteMessage);
+        messageService.send(new Gson().fromJson(text,RemoteMessage.class));
     }
 
     @Override

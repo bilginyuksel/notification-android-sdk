@@ -3,9 +3,14 @@ package com.bilginyuksel.sdk.push;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.widget.Button;
+
+import com.bilginyuksel.sdk.push.api.MessageService;
+import com.bilginyuksel.sdk.push.api.WebSocketListenerImpl;
+import com.bilginyuksel.sdk.push.api.WsConnection;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,23 +21,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        NotificationSender notificationSender = new NotificationSender(getApplicationContext());
-        RemoteMessage remoteMessage = new RemoteMessage();
-
-        Map<String ,String> extras = new HashMap<>();
-        extras.put("mesut","gedik");
-        extras.put("kaan","yüksel");
-        remoteMessage.setTitle("Deneme");
-        remoteMessage.setContent("Bu push sdk testi içindir");
-        remoteMessage.setExtras(extras);
-        setContentView(R.layout.activity_main);
-
-        //WsConnection wsConnection = new WsConnection(notificationSender);
-        //wsConnection.start();
-        Button button = findViewById(R.id.sendNotifbutton);
-        button.setOnClickListener(v -> notificationSender.send(remoteMessage));
+        startService(new Intent(this, MessageService.class));
     }
-
-
-
 }
