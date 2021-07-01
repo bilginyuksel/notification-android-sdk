@@ -1,65 +1,30 @@
 package com.bilginyuksel.sdk.push.api;
 
-import android.content.Context;
-import android.net.InetAddresses;
-import android.os.Build;
-import android.util.Log;
-
-import androidx.annotation.RequiresApi;
-
-import com.bilginyuksel.sdk.push.NotificationSender;
+import com.bilginyuksel.sdk.push.RemoteMessage;
+import com.google.gson.Gson;
 import com.neovisionaries.ws.client.ThreadType;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketException;
-import com.neovisionaries.ws.client.WebSocketFactory;
 import com.neovisionaries.ws.client.WebSocketFrame;
 import com.neovisionaries.ws.client.WebSocketListener;
 import com.neovisionaries.ws.client.WebSocketState;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
-public class ClientServerConnection implements WebSocketListener {
-    private final String TAG = ClientServerConnection.class.getSimpleName();
+public class WebSocketListenerImpl implements WebSocketListener {
 
-    private final String hostname;
-    private final String path;
-    private final int port;
+//    private final NotificationCallback notificationCallback;
 
-    private WebSocket notificationSocket;
+//    public WebSocketListenerImpl(NotificationCallback notificationCallback){
+//        this.notificationCallback= notificationCallback;
+//
+//    }
 
-    private final Context context;
+    private final MessageService messageService;
 
-    private LocalDateTime createTime;
-    private LocalDateTime lastNotificationTime;
-
-    // Run this on debug mode
-    public ClientServerConnection(Context context) {
-        this(context, "192.168.1.61", 8888, "handshake");
-//        this("localhost", 8888, "handshake");
-    }
-
-    public ClientServerConnection(Context context, String hostname, int port, String path) {
-        this.context = context;
-        this.hostname = hostname;
-        this.path = path;
-        this.port = port;
-    }
-
-    // Handshake process between server and client also initializes to output/input channels
-    public void connect() throws IOException, URISyntaxException, WebSocketException {
-        URI connectionUri = new URI(
-                String.format(Locale.ENGLISH, "ws://%s:%d/%s?clientId=testid", hostname, port, path));
-
-        notificationSocket = new WebSocketFactory().createSocket(connectionUri);
-        notificationSocket.addListener(this);
-        notificationSocket.connect();
-
+    public WebSocketListenerImpl(MessageService messageService) {
+        this.messageService = messageService;
     }
 
     @Override
@@ -69,12 +34,12 @@ public class ClientServerConnection implements WebSocketListener {
 
     @Override
     public void onConnected(WebSocket websocket, Map<String, List<String>> headers) throws Exception {
-        Log.d(TAG, "onConnected: Connection established successfully");
+
     }
 
     @Override
     public void onConnectError(WebSocket websocket, WebSocketException cause) throws Exception {
-        Log.e(TAG, "onConnectError: " + cause.getError().toString());
+
     }
 
     @Override
@@ -117,21 +82,20 @@ public class ClientServerConnection implements WebSocketListener {
 
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onTextMessage(WebSocket websocket, String text) throws Exception {
-        Log.i(TAG, "onTextMessage: String text message sent= " + text);
-        //NotificationSender.send(context,text);
+        System.out.println("TextMessage:" + text);
+        messageService.send(new Gson().fromJson(text,RemoteMessage.class));
     }
 
     @Override
     public void onTextMessage(WebSocket websocket, byte[] data) throws Exception {
-        Log.i(TAG, "onTextMessage: Byte message sent= " + data);
+
     }
 
     @Override
     public void onBinaryMessage(WebSocket websocket, byte[] binary) throws Exception {
-        Log.i(TAG, "onBinaryMessage: Binary message sent= " + binary);
+
     }
 
     @Override
